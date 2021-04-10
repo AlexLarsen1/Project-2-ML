@@ -206,11 +206,11 @@ y<-port$G3
 N = nrow(X)
 M = ncol(X)
 K=5
-y_true = matrix(,0,1)
-yhat = matrix(,0,3)
+y_true = matrix(, 0,1)
+yhat = matrix(, 0,3)
 r = matrix(, 0,3)
 lambda=matrix(, 0,1)
-h_unit<-matrix(,0,1)
+h_unit=matrix(, 0,1)
 
 ## set the seed to make your partition reproducible
 set.seed(123)
@@ -252,13 +252,13 @@ set.seed(123)
     colnames<-colnames(dummy_train)
     fmla <- as.formula(paste("y_train ~ ", paste(colnames, collapse= "+")))
     n1 <- function(d,sz){nnet(fmla,data=d,size=sz,linout=T)}
-    n1error<-rep(0,20)
-    for(i in 1:20){
+    n1error<-rep(0,10)
+    for(i in 1:10){
       n1error[i]<-crossvalidation(model=n1, data=cbind(y_train,dummy_train),size=i) #10 different values of h (tuning grid)
     }
     error<-data.frame(n1error)
-    opt<-which(error==min(error))
-    final_model_C<-n1(d=dummy_train,sz=opt)
+    opt_C<-which(error==min(error))
+    final_model_C<-n1(d=dummy_train,sz=opt_C)
     
     ##Predictions
     yhat_A<-predict(final_model_A,newx=data.matrix(Xdatframe_test),s=opt_A)
@@ -282,13 +282,13 @@ set.seed(123)
     r = rbind(r, dr)
     
     lambda<-rbind(lambda,opt_A)
-    h_unit<-rbind(h_unit,opt)
+    h_unit<-rbind(h_unit,opt_C)
     y_true<-data.frame(y_test)
     y_true<- rbind( y_true, y_test)
   }
   
 
-print(list(r,lambda,hidden_units))
+print(list(r,lambda,h_unit))
   
 
 
