@@ -113,17 +113,16 @@ options(dplyr.print_max = 1e9)
 
 port$intercept<-rep(1,nrow(port)) #including intercept term
 ### Cross-Validation
-train<-port
 cv_folds <- rsample::vfold_cv(train, v = 5)
   
 ## Recipe 
 
-rec_1<-recipe(G3 ~ ., data = train) %>%
+rec_1<-recipe(G3 ~ ., data = port) %>%
   step_normalize(all_numeric(),- c(all_outcomes(),intercept))%>%
   step_dummy(names(Filter(is.factor, port))) 
 
   
-baked_data_1<-bake(prep(rec_1),new_data = train)
+baked_data_1<-bake(prep(rec_1),new_data = port)
 ## Fitting a reg.regression model tuning lambda##
 
 RegReg <- function(rec,cv_folds,x){
@@ -148,7 +147,7 @@ RegReg <- function(rec,cv_folds,x){
     wf %>% update_model(glmnet_spec),
     resamples = cv_folds,
     grid = lmbda_mixtr_grid,
-    metrics = yardstick::metric_set(rmse)
+    metrics = yardstick::metric_set(yardstick::rmse)
   )
   
   plot<-model_tuned %>%
@@ -179,7 +178,7 @@ RegReg <- function(rec,cv_folds,x){
 
   return(list(RMSE_best,final_model)) 
 }
-RegReg(rec=rec_2,cv_folds=cv_folds,x=train)
+RegReg(rec=rec_1,cv_folds=cv_folds,x=train)
 
 
 
