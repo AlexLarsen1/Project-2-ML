@@ -204,7 +204,7 @@ X<-port[-33]
 y<-port$G3
 N = nrow(X)
 M = ncol(X)
-K=5
+K=10
 y_true = matrix(, 0,1)
 y_hat = matrix(, 0,3)
 r = matrix(, 0,3)
@@ -297,4 +297,15 @@ z_Eb<-z$El.net-z$baseline
 z_En<-z$El.net-z$NN
 z_bn<-z$NN-z$baseline
 hist(z_bn,breaks=100)
-t.test(z_bn, alternative = "two.sided", alpha=0.05)
+
+Eb<-t.test(z_Eb, alternative = "two.sided", alpha=0.05)
+En<-t.test(z_En, alternative = "two.sided", alpha=0.05)
+bn<-t.test(z_bn, alternative = "two.sided", alpha=0.05)
+
+a<-c(Eb$p.value,Eb$conf.int)
+b<-c(En$p.value,En$conf.int)
+c<-c(bn$p.value,bn$conf.int)
+
+results<-cbind(a,b,c)
+
+
